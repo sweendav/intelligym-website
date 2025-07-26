@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IntelliGym - Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fallback-link {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .fallback-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+    <script>
+        function detectDeviceAndRedirect() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+            
+            // Get the token from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token_hash');
+            const type = urlParams.get('type');
+            const next = urlParams.get('next');
+            
+            // Build the redirect URL with parameters
+            const params = new URLSearchParams();
+            if (token) params.append('token', token);
+            if (type) params.append('type', type);
+            if (next) params.append('next', next);
+            
+            const queryString = params.toString();
+            const redirectUrl = queryString ? `?${queryString}` : '';
+            
+            if (isMobile) {
+                // Try to redirect to mobile app first
+                const appUrl = `intelligym://reset-password${redirectUrl}`;
+                window.location.href = appUrl;
+                
+                // Fallback: if app doesn't open within 2 seconds, redirect to mobile web version
+                setTimeout(() => {
+                    const webUrl = `https://intelligym.app/reset-password${redirectUrl}`;
+                    window.location.href = webUrl;
+                }, 2000);
+            } else {
+                // Redirect to desktop web version
+                const webUrl = `https://intelligym.app/reset-password${redirectUrl}`;
+                window.location.href = webUrl;
+            }
+        }
+        
+        // Run detection when page loads
+        window.onload = function() {
+            // Show loading state
+            document.querySelector('.message').textContent = 'Detecting your device...';
+            
+            // Small delay to show the loading state
+            setTimeout(() => {
+                detectDeviceAndRedirect();
+            }, 500);
+        };
+        
+        // Handle manual fallback
+        function manualRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token_hash');
+            const type = urlParams.get('type');
+            const next = urlParams.get('next');
+            
+            const params = new URLSearchParams();
+            if (token) params.append('token', token);
+            if (type) params.append('type', type);
+            if (next) params.append('next', next);
+            
+            const queryString = params.toString();
+            const webUrl = `https://intelligym.app/reset-password${queryString ? `?${queryString}` : ''}`;
+            window.location.href = webUrl;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">IntelliGym</div>
+        <div class="subtitle">Your AI-Powered Workout Companion</div>
+        
+        <div class="spinner"></div>
+        
+        <div class="message">Redirecting to IntelliGym...</div>
+        
+        <a href="#" onclick="manualRedirect()" class="fallback-link">
+            Continue to Web Version
+        </a>
+    </div>
+</body>
+</html> 
