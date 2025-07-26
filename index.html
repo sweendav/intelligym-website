@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IntelliGym - Your AI-Powered Workout Companion</title>
+    <!-- Add Supabase JavaScript client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -253,6 +255,12 @@
             border: 1px solid #f5c6cb;
         }
 
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
         /* Mobile App Section */
         .mobile-section {
             background: rgba(255, 255, 255, 0.1);
@@ -336,6 +344,37 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Success State */
+        .auth-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
     </style>
 </head>
@@ -451,6 +490,17 @@
                         <p>Remember your password? <a href="#" onclick="switchTab('login')">Sign in</a></p>
                     </div>
                 </form>
+
+                <!-- Success State -->
+                <div id="auth-success" class="auth-success" style="display: none;">
+                    <div class="success-icon">✓</div>
+                    <h2 class="success-title" id="success-title">Welcome to IntelliGym!</h2>
+                    <p class="success-message" id="success-message">Your account has been created successfully.</p>
+                    <div class="success-actions">
+                        <a href="intelligym://" class="btn btn-primary">Open in App</a>
+                        <a href="#download" class="btn btn-secondary">Download App</a>
+                    </div>
+                </div>
             </section>
         </main>
 
@@ -468,12 +518,18 @@
     </div>
 
     <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'https://lwuppbcymbcrwotixjly.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3dXBwYmN5bWJjcntvdGl4amx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzODYxNzUsImV4cCI6MjA2ODk2MjE3NX0.jN45QQZvi1gawfMqA7F0Mo0bR0J8S59SVMBZetYGT2w';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         // Tab switching functionality
         function switchTab(tabName) {
-            // Hide all forms
+            // Hide all forms and success state
             document.querySelectorAll('.auth-form').forEach(form => {
                 form.classList.remove('active');
             });
+            document.getElementById('auth-success').style.display = 'none';
             
             // Remove active class from all tabs
             document.querySelectorAll('.auth-tab').forEach(tab => {
@@ -520,6 +576,18 @@
             }
         }
 
+        function showSuccess(title, message) {
+            // Hide all forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Show success state
+            document.getElementById('success-title').textContent = title;
+            document.getElementById('success-message').textContent = message;
+            document.getElementById('auth-success').style.display = 'block';
+        }
+
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -528,12 +596,28 @@
             setLoading('login-submit', true);
             
             try {
-                // This would integrate with your Supabase auth
-                // For now, we'll show a demo message
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                showMessage('login', 'Please use the mobile app to sign in for the full experience.', 'success');
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('Welcome back!', 'You have successfully signed in to IntelliGym.');
+                
             } catch (error) {
-                showMessage('login', 'Login failed. Please try again.', 'error');
+                console.error('Login error:', error);
+                let errorMessage = 'Login failed. Please try again.';
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMessage = 'Invalid email or password. Please try again.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMessage = 'Please check your email and confirm your account before signing in.';
+                }
+                
+                showMessage('login', errorMessage, 'error');
             } finally {
                 setLoading('login-submit', false);
             }
@@ -550,14 +634,37 @@
                 return;
             }
             
+            if (password.length < 6) {
+                showMessage('signup', 'Password must be at least 6 characters long.', 'error');
+                return;
+            }
+            
             setLoading('signup-submit', true);
             
             try {
-                // This would integrate with your Supabase auth
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                showMessage('signup', 'Account created! Please check your email to confirm your account.', 'success');
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        emailRedirectTo: 'https://www.intelligym.app'
+                    }
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('Account Created!', 'Please check your email to confirm your account before signing in.');
+                
             } catch (error) {
-                showMessage('signup', 'Signup failed. Please try again.', 'error');
+                console.error('Signup error:', error);
+                let errorMessage = 'Signup failed. Please try again.';
+                
+                if (error.message.includes('already registered')) {
+                    errorMessage = 'An account with this email already exists. Please sign in instead.';
+                }
+                
+                showMessage('signup', errorMessage, 'error');
             } finally {
                 setLoading('signup-submit', false);
             }
@@ -570,10 +677,18 @@
             setLoading('reset-submit', true);
             
             try {
-                // This would integrate with your Supabase auth
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                showMessage('reset', 'Password reset email sent! Please check your inbox.', 'success');
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://www.intelligym.app/redirect.html'
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('Reset Link Sent!', 'Please check your email for password reset instructions.');
+                
             } catch (error) {
+                console.error('Reset password error:', error);
                 showMessage('reset', 'Failed to send reset email. Please try again.', 'error');
             } finally {
                 setLoading('reset-submit', false);
