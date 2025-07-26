@@ -6,6 +6,10 @@
     <title>IntelliGym - Your AI-Powered Workout Companion</title>
     <!-- Add Supabase JavaScript client -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Load local configuration if it exists (for development) -->
+    <script src="config.local.js" onerror="console.log('No local config found, using default configuration')"></script>
+    <!-- Load main configuration -->
+    <script src="config.js"></script>
     <style>
         * {
             margin: 0;
@@ -376,6 +380,113 @@
             justify-content: center;
             flex-wrap: wrap;
         }
+
+        /* User Dashboard Styles */
+        .user-dashboard {
+            grid-column: 1 / -1;
+            color: white;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .no-activity {
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Responsive adjustments for dashboard */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -518,10 +629,226 @@
     </div>
 
     <script>
-        // Initialize Supabase client
-        const supabaseUrl = 'https://lwuppbcymbcrwotixjly.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3dXBwYmN5bWJjcntvdGl4amx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzODYxNzUsImV4cCI6MjA2ODk2MjE3NX0.jN45QQZvi1gawfMqA7F0Mo0bR0J8S59SVMBZetYGT2w';
+        // Initialize Supabase client using configuration
+        const supabaseUrl = window.IntelliGymConfig.supabase.url;
+        const supabaseKey = window.IntelliGymConfig.supabase.anonKey;
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Global user state
+        let currentUser = null;
+
+        // Check authentication state on page load
+        async function checkAuthState() {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (user && !error) {
+                currentUser = user;
+                showUserDashboard();
+            } else {
+                showAuthForms();
+            }
+        }
+
+        // Show user dashboard when logged in
+        function showUserDashboard() {
+            const mainContent = document.querySelector('.main-content');
+            const mobileSection = document.querySelector('.mobile-section');
+            
+            mainContent.innerHTML = `
+                <section class="user-dashboard">
+                    <div class="dashboard-header">
+                        <h1>Welcome back, ${currentUser.email}!</h1>
+                        <button onclick="handleLogout()" class="btn btn-secondary">Sign Out</button>
+                    </div>
+                    
+                    <div class="dashboard-content">
+                        <div class="dashboard-card">
+                            <h3>Your Workout Stats</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-number">0</div>
+                                    <div class="stat-label">Workouts Completed</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">0</div>
+                                    <div class="stat-label">Current Streak</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">0</div>
+                                    <div class="stat-label">Calories Burned</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>Quick Actions</h3>
+                            <div class="action-buttons">
+                                <a href="intelligym://dashboard" class="btn btn-primary">Open Mobile App</a>
+                                <a href="intelligym://workout" class="btn btn-secondary">Start Workout</a>
+                                <a href="intelligym://profile" class="btn btn-secondary">View Profile</a>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>Recent Activity</h3>
+                            <p class="no-activity">No recent activity. Start your first workout!</p>
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            // Hide mobile section when logged in
+            if (mobileSection) {
+                mobileSection.style.display = 'none';
+            }
+        }
+
+        // Show authentication forms when not logged in
+        function showAuthForms() {
+            const mainContent = document.querySelector('.main-content');
+            const mobileSection = document.querySelector('.mobile-section');
+            
+            // Restore original content
+            mainContent.innerHTML = `
+                <!-- Hero Section -->
+                <section class="hero-section">
+                    <h1 class="hero-title">Transform Your Fitness Journey</h1>
+                    <p class="hero-subtitle">
+                        Experience personalized workouts, real-time tracking, and AI-powered insights that adapt to your progress.
+                    </p>
+                    
+                    <ul class="features">
+                        <li>AI-Generated Workout Plans</li>
+                        <li>Real-Time Progress Tracking</li>
+                        <li>Apple Watch Integration</li>
+                        <li>Heart Rate & Calorie Monitoring</li>
+                        <li>Offline Sync Capabilities</li>
+                        <li>Personalized Recommendations</li>
+                    </ul>
+
+                    <div class="cta-buttons">
+                        <a href="#download" class="btn btn-primary">Download App</a>
+                        <a href="#learn-more" class="btn btn-secondary">Learn More</a>
+                    </div>
+                </section>
+
+                <!-- Auth Forms -->
+                <section class="auth-container">
+                    <div class="auth-tabs">
+                        <div class="auth-tab active" onclick="switchTab('login')">Sign In</div>
+                        <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+                        <div class="auth-tab" onclick="switchTab('reset')">Reset Password</div>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-form active">
+                        <div id="login-message" class="message" style="display: none;"></div>
+                        
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        
+                        <button type="submit" class="form-submit" id="login-submit">
+                            <span class="btn-text">Sign In</span>
+                            <span class="loading" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="form-footer">
+                            <p>Don't have an account? <a href="#" onclick="switchTab('signup')">Sign up</a></p>
+                            <p><a href="#" onclick="switchTab('reset')">Forgot your password?</a></p>
+                        </div>
+                    </form>
+
+                    <!-- Sign Up Form -->
+                    <form id="signup-form" class="auth-form">
+                        <div id="signup-message" class="message" style="display: none;"></div>
+                        
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-confirm-password">Confirm Password</label>
+                            <input type="password" id="signup-confirm-password" required minlength="6">
+                        </div>
+                        
+                        <button type="submit" class="form-submit" id="signup-submit">
+                            <span class="btn-text">Create Account</span>
+                            <span class="loading" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="#" onclick="switchTab('login')">Sign in</a></p>
+                        </div>
+                    </form>
+
+                    <!-- Reset Password Form -->
+                    <form id="reset-form" class="auth-form">
+                        <div id="reset-message" class="message" style="display: none;"></div>
+                        
+                        <div class="form-group">
+                            <label for="reset-email">Email</label>
+                            <input type="email" id="reset-email" required>
+                        </div>
+                        
+                        <button type="submit" class="form-submit" id="reset-submit">
+                            <span class="btn-text">Send Reset Link</span>
+                            <span class="loading" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="form-footer">
+                            <p>Remember your password? <a href="#" onclick="switchTab('login')">Sign in</a></p>
+                        </div>
+                    </form>
+
+                    <!-- Success State -->
+                    <div id="auth-success" class="auth-success" style="display: none;">
+                        <div class="success-icon">✓</div>
+                        <h2 class="success-title" id="success-title">Welcome to IntelliGym!</h2>
+                        <p class="success-message" id="success-message">Your account has been created successfully.</p>
+                        <div class="success-actions">
+                            <a href="intelligym://" class="btn btn-primary">Open in App</a>
+                            <a href="#download" class="btn btn-secondary">Download App</a>
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            // Re-attach event listeners
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('signup-form').addEventListener('submit', handleSignup);
+            document.getElementById('reset-form').addEventListener('submit', handleReset);
+            
+            // Show mobile section when not logged in
+            if (mobileSection) {
+                mobileSection.style.display = 'block';
+            }
+        }
+
+        // Handle logout
+        async function handleLogout() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                currentUser = null;
+                showAuthForms();
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Error signing out. Please try again.');
+            }
+        }
 
         // Tab switching functionality
         function switchTab(tabName) {
@@ -605,7 +932,8 @@
                     throw error;
                 }
                 
-                showSuccess('Welcome back!', 'You have successfully signed in to IntelliGym.');
+                currentUser = data.user;
+                showUserDashboard();
                 
             } catch (error) {
                 console.error('Login error:', error);
@@ -646,7 +974,7 @@
                     email: email,
                     password: password,
                     options: {
-                        emailRedirectTo: 'https://www.intelligym.app'
+                        emailRedirectTo: window.IntelliGymConfig.email.redirectTo
                     }
                 });
                 
@@ -678,7 +1006,7 @@
             
             try {
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: 'https://www.intelligym.app/redirect.html'
+                    redirectTo: window.IntelliGymConfig.email.resetPasswordRedirect
                 });
                 
                 if (error) {
@@ -694,6 +1022,20 @@
                 setLoading('reset-submit', false);
             }
         }
+
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session?.user) {
+                currentUser = session.user;
+                showUserDashboard();
+            } else if (event === 'SIGNED_OUT') {
+                currentUser = null;
+                showAuthForms();
+            }
+        });
+
+        // Check auth state on page load
+        checkAuthState();
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
