@@ -50,6 +50,10 @@ jobs:
         };
         window.IntelliGymLocalConfig = config;
         EOF
+        echo "Config file created successfully"
+        echo "Supabase URL: ${{ secrets.SUPABASE_URL }}"
+        echo "Config file contents (without keys):"
+        cat config.local.js | sed 's/anonKey:.*/anonKey: [HIDDEN]/'
     
     - name: Setup Pages
       uses: actions/configure-pages@v4

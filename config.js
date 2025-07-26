@@ -6,7 +6,7 @@
 let config = null;
 
 // 1. Try to load from environment variables (for production deployments)
-if (typeof process !== 'undefined' && process.env) {
+if (typeof process !== 'undefined' && process.env && process.env.SUPABASE_URL) {
     config = {
         supabase: {
             url: process.env.SUPABASE_URL,
@@ -31,6 +31,9 @@ if (!config && typeof window !== 'undefined') {
         // This will be loaded by a separate script tag in the HTML
         if (window.IntelliGymLocalConfig) {
             config = window.IntelliGymLocalConfig;
+            console.log('✅ Loaded configuration from config.local.js');
+        } else {
+            console.log('⚠️ No IntelliGymLocalConfig found in window object');
         }
     } catch (e) {
         console.warn('Could not load local config:', e);
@@ -57,8 +60,12 @@ if (!config) {
     };
     
     // Show warning in development
-    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-        console.warn('⚠️ Using placeholder configuration. Create config.local.js for development or set environment variables for production.');
+    if (typeof window !== 'undefined') {
+        if (window.location.hostname === 'localhost') {
+            console.warn('⚠️ Using placeholder configuration. Create config.local.js for development or set environment variables for production.');
+        } else {
+            console.warn('⚠️ Using placeholder configuration. Check GitHub Secrets and deployment logs.');
+        }
     }
 }
 
