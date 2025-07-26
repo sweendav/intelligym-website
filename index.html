@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliGym - Your AI-Powered Workout Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+        }
+
+        .hero-section {
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .features li::before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Mobile App Section */
+        .mobile-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .mobile-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .mobile-description {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .app-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .app-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .app-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .auth-container {
+                padding: 30px 20px;
+            }
+
+            .cta-buttons {
+                justify-content: center;
+            }
+
+            .app-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">IntelliGym</div>
+            <div class="tagline">Your AI-Powered Workout Companion</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <h1 class="hero-title">Transform Your Fitness Journey</h1>
+                <p class="hero-subtitle">
+                    Experience personalized workouts, real-time tracking, and AI-powered insights that adapt to your progress.
+                </p>
+                
+                <ul class="features">
+                    <li>AI-Generated Workout Plans</li>
+                    <li>Real-Time Progress Tracking</li>
+                    <li>Apple Watch Integration</li>
+                    <li>Heart Rate & Calorie Monitoring</li>
+                    <li>Offline Sync Capabilities</li>
+                    <li>Personalized Recommendations</li>
+                </ul>
+
+                <div class="cta-buttons">
+                    <a href="#download" class="btn btn-primary">Download App</a>
+                    <a href="#learn-more" class="btn btn-secondary">Learn More</a>
+                </div>
+            </section>
+
+            <!-- Auth Forms -->
+            <section class="auth-container">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchTab('login')">Sign In</div>
+                    <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+                    <div class="auth-tab" onclick="switchTab('reset')">Reset Password</div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active">
+                    <div id="login-message" class="message" style="display: none;"></div>
+                    
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    
+                    <button type="submit" class="form-submit" id="login-submit">
+                        <span class="btn-text">Sign In</span>
+                        <span class="loading" style="display: none;"></span>
+                    </button>
+                    
+                    <div class="form-footer">
+                        <p>Don't have an account? <a href="#" onclick="switchTab('signup')">Sign up</a></p>
+                        <p><a href="#" onclick="switchTab('reset')">Forgot your password?</a></p>
+                    </div>
+                </form>
+
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="auth-form">
+                    <div id="signup-message" class="message" style="display: none;"></div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="form-submit" id="signup-submit">
+                        <span class="btn-text">Create Account</span>
+                        <span class="loading" style="display: none;"></span>
+                    </button>
+                    
+                    <div class="form-footer">
+                        <p>Already have an account? <a href="#" onclick="switchTab('login')">Sign in</a></p>
+                    </div>
+                </form>
+
+                <!-- Reset Password Form -->
+                <form id="reset-form" class="auth-form">
+                    <div id="reset-message" class="message" style="display: none;"></div>
+                    
+                    <div class="form-group">
+                        <label for="reset-email">Email</label>
+                        <input type="email" id="reset-email" required>
+                    </div>
+                    
+                    <button type="submit" class="form-submit" id="reset-submit">
+                        <span class="btn-text">Send Reset Link</span>
+                        <span class="loading" style="display: none;"></span>
+                    </button>
+                    
+                    <div class="form-footer">
+                        <p>Remember your password? <a href="#" onclick="switchTab('login')">Sign in</a></p>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <!-- Mobile App Section -->
+        <section class="mobile-section">
+            <h2 class="mobile-title">Get the Full Experience</h2>
+            <p class="mobile-description">
+                Download the IntelliGym mobile app for personalized workouts, real-time tracking, and seamless Apple Watch integration.
+            </p>
+            <div class="app-buttons">
+                <a href="intelligym://" class="app-btn">Open in App</a>
+                <a href="#download" class="app-btn">Download App</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected form
+            document.getElementById(tabName + '-form').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Clear messages
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.style.display = 'none';
+            });
+        }
+
+        // Form submission handlers
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+        document.getElementById('signup-form').addEventListener('submit', handleSignup);
+        document.getElementById('reset-form').addEventListener('submit', handleReset);
+
+        function showMessage(formId, message, type) {
+            const messageDiv = document.getElementById(formId + '-message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+
+        function setLoading(buttonId, loading) {
+            const button = document.getElementById(buttonId);
+            const btnText = button.querySelector('.btn-text');
+            const loadingSpinner = button.querySelector('.loading');
+            
+            if (loading) {
+                btnText.style.display = 'none';
+                loadingSpinner.style.display = 'inline-block';
+                button.disabled = true;
+            } else {
+                btnText.style.display = 'inline';
+                loadingSpinner.style.display = 'none';
+                button.disabled = false;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            setLoading('login-submit', true);
+            
+            try {
+                // This would integrate with your Supabase auth
+                // For now, we'll show a demo message
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                showMessage('login', 'Please use the mobile app to sign in for the full experience.', 'success');
+            } catch (error) {
+                showMessage('login', 'Login failed. Please try again.', 'error');
+            } finally {
+                setLoading('login-submit', false);
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                showMessage('signup', 'Passwords do not match.', 'error');
+                return;
+            }
+            
+            setLoading('signup-submit', true);
+            
+            try {
+                // This would integrate with your Supabase auth
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                showMessage('signup', 'Account created! Please check your email to confirm your account.', 'success');
+            } catch (error) {
+                showMessage('signup', 'Signup failed. Please try again.', 'error');
+            } finally {
+                setLoading('signup-submit', false);
+            }
+        }
+
+        async function handleReset(e) {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            
+            setLoading('reset-submit', true);
+            
+            try {
+                // This would integrate with your Supabase auth
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                showMessage('reset', 'Password reset email sent! Please check your inbox.', 'success');
+            } catch (error) {
+                showMessage('reset', 'Failed to send reset email. Please try again.', 'error');
+            } finally {
+                setLoading('reset-submit', false);
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
