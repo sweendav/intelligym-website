@@ -5,6 +5,12 @@
 // Try to load configuration from multiple sources
 let config = null;
 
+// Check if config is already defined (from config.local.js)
+if (typeof window !== 'undefined' && window.IntelliGymLocalConfig) {
+    config = window.IntelliGymLocalConfig;
+    console.log('✅ Loaded configuration from config.local.js');
+}
+
 // 1. Try to load from environment variables (for production deployments)
 if (typeof process !== 'undefined' && process.env && process.env.SUPABASE_URL) {
     config = {
@@ -25,13 +31,13 @@ if (typeof process !== 'undefined' && process.env && process.env.SUPABASE_URL) {
     };
 }
 
-// 2. If no environment variables, try to load from config.local.js (for development)
+// 2. If no environment variables and no local config, try to load from config.local.js (for development)
 if (!config && typeof window !== 'undefined') {
     try {
         // This will be loaded by a separate script tag in the HTML
         if (window.IntelliGymLocalConfig) {
             config = window.IntelliGymLocalConfig;
-            console.log('✅ Loaded configuration from config.local.js');
+            console.log('✅ Loaded configuration from config.local.js (fallback)');
         } else {
             console.log('⚠️ No IntelliGymLocalConfig found in window object');
         }
