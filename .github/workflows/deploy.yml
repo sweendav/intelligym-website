@@ -31,6 +31,24 @@ jobs:
     
     - name: Create config file with environment variables
       run: |
+        echo "=== DEBUGGING SECRETS ==="
+        echo "Checking if SUPABASE_URL exists:"
+        if [ -n "${{ secrets.SUPABASE_URL }}" ]; then
+          echo "✅ SUPABASE_URL is set"
+          echo "URL: ${{ secrets.SUPABASE_URL }}"
+        else
+          echo "❌ SUPABASE_URL is empty or not set"
+        fi
+        
+        echo "Checking if SUPABASE_ANON_KEY exists:"
+        if [ -n "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
+          echo "✅ SUPABASE_ANON_KEY is set"
+          echo "Key length: ${#SUPABASE_ANON_KEY}"
+        else
+          echo "❌ SUPABASE_ANON_KEY is empty or not set"
+        fi
+        
+        echo "=== CREATING CONFIG FILE ==="
         cat > config.local.js << EOF
         const config = {
           supabase: {
@@ -50,10 +68,19 @@ jobs:
         };
         window.IntelliGymLocalConfig = config;
         EOF
-        echo "Config file created successfully"
-        echo "Supabase URL: ${{ secrets.SUPABASE_URL }}"
-        echo "Config file contents (without keys):"
+        
+        echo "✅ Config file created successfully"
+        echo "📁 File size: $(wc -c < config.local.js) bytes"
+        echo "📄 Config file contents (without keys):"
         cat config.local.js | sed 's/anonKey:.*/anonKey: [HIDDEN]/'
+        
+        echo "=== VERIFYING FILE ==="
+        if [ -f config.local.js ]; then
+          echo "✅ config.local.js exists"
+          ls -la config.local.js
+        else
+          echo "❌ config.local.js was not created"
+        fi
     
     - name: Setup Pages
       uses: actions/configure-pages@v4
