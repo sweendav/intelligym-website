@@ -50,7 +50,7 @@ jobs:
         
         echo "=== CREATING CONFIG FILE ==="
         cat > config.local.js << EOF
-        const config = {
+        window.IntelliGymLocalConfig = {
           supabase: {
             url: '${{ secrets.SUPABASE_URL }}',
             anonKey: '${{ secrets.SUPABASE_ANON_KEY }}'
@@ -66,7 +66,6 @@ jobs:
             resetPasswordRedirect: '${{ secrets.RESET_PASSWORD_REDIRECT_URL || 'https://www.intelligym.app/redirect.html' }}'
           }
         };
-        window.IntelliGymLocalConfig = config;
         EOF
         
         echo "✅ Config file created successfully"
