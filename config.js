@@ -80,4 +80,14 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = config;
 } else {
     window.IntelliGymConfig = config;
+    
+    // Check for local config after a short delay (in case config.local.js loads after this)
+    if (typeof window !== 'undefined') {
+        setTimeout(() => {
+            if (window.IntelliGymLocalConfig && !window.IntelliGymConfig.supabase.url.includes('YOUR_SUPABASE_URL_HERE')) {
+                window.IntelliGymConfig = window.IntelliGymLocalConfig;
+                console.log('✅ Updated configuration from config.local.js (delayed load)');
+            }
+        }, 100);
+    }
 } 

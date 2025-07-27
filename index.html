@@ -6,10 +6,10 @@
     <title>IntelliGym - Your AI-Powered Workout Companion</title>
     <!-- Add Supabase JavaScript client -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Load main configuration first -->
+    <script src="config.js"></script>
     <!-- Load local configuration if it exists (for development) -->
     <script src="config.local.js" onerror="console.log('No local config found, using default configuration')"></script>
-    <!-- Load main configuration -->
-    <script src="config.js"></script>
     <style>
         * {
             margin: 0;
