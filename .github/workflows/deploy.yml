@@ -90,6 +90,21 @@ jobs:
       with:
         path: '.'
         
+    - name: Verify files in artifact
+      run: |
+        echo "=== VERIFYING DEPLOYMENT FILES ==="
+        echo "Files in current directory:"
+        ls -la
+        echo ""
+        echo "Checking if config.local.js exists:"
+        if [ -f config.local.js ]; then
+          echo "✅ config.local.js exists in deployment directory"
+          echo "File size: $(wc -c < config.local.js) bytes"
+          echo "File permissions: $(ls -la config.local.js)"
+        else
+          echo "❌ config.local.js missing from deployment directory"
+        fi
+        
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4 

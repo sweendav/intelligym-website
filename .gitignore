@@ -5,8 +5,8 @@
 .env.development
 
 # Configuration files with real API keys (create these locally)
-config.local.js
-config.production.js
+# Note: config.local.js is created by GitHub Actions during deployment
+# config.production.js
 
 # IDE and editor files
 .vscode/
