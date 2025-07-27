@@ -629,9 +629,18 @@
     </div>
 
     <script>
+        // Debug configuration loading
+        console.log('🔍 Debugging configuration...');
+        console.log('window.IntelliGymConfig:', window.IntelliGymConfig);
+        console.log('window.IntelliGymLocalConfig:', window.IntelliGymLocalConfig);
+        
         // Initialize Supabase client using configuration
         const supabaseUrl = window.IntelliGymConfig.supabase.url;
         const supabaseKey = window.IntelliGymConfig.supabase.anonKey;
+        
+        console.log('🔍 Supabase URL:', supabaseUrl);
+        console.log('🔍 Supabase Key length:', supabaseKey ? supabaseKey.length : 'undefined');
+        
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // Global user state
