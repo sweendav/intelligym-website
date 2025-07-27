@@ -12,7 +12,7 @@ if (typeof window !== 'undefined' && window.IntelliGymLocalConfig) {
 }
 
 // 1. Try to load from environment variables (for production deployments)
-if (typeof process !== 'undefined' && process.env && process.env.SUPABASE_URL) {
+if (!config && typeof process !== 'undefined' && process.env && process.env.SUPABASE_URL) {
     config = {
         supabase: {
             url: process.env.SUPABASE_URL,
@@ -84,7 +84,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // Check for local config after a short delay (in case config.local.js loads after this)
     if (typeof window !== 'undefined') {
         setTimeout(() => {
-            if (window.IntelliGymLocalConfig && !window.IntelliGymConfig.supabase.url.includes('YOUR_SUPABASE_URL_HERE')) {
+            if (window.IntelliGymLocalConfig) {
                 window.IntelliGymConfig = window.IntelliGymLocalConfig;
                 console.log('✅ Updated configuration from config.local.js (delayed load)');
             }
