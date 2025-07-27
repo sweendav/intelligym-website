@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Config Test</title>
+</head>
+<body>
+    <h1>Config Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        // Test if config.local.js loads
+        const script = document.createElement('script');
+        script.src = 'config.local.js';
+        script.onload = function() {
+            if (window.IntelliGymLocalConfig) {
+                document.getElementById('result').innerHTML = 
+                    '<p style="color: green;">✅ config.local.js loaded successfully!</p>' +
+                    '<p>URL: ' + window.IntelliGymLocalConfig.supabase.url + '</p>';
+            } else {
+                document.getElementById('result').innerHTML = 
+                    '<p style="color: red;">❌ config.local.js loaded but IntelliGymLocalConfig not found</p>';
+            }
+        };
+        script.onerror = function() {
+            document.getElementById('result').innerHTML = 
+                '<p style="color: red;">❌ config.local.js failed to load (404 error)</p>';
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html> 
