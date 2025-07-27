@@ -8,7 +8,7 @@ let config = null;
 // Check if config is already defined (from config.local.js)
 if (typeof window !== 'undefined' && window.IntelliGymLocalConfig) {
     config = window.IntelliGymLocalConfig;
-    console.log('✅ Loaded configuration from config.local.js');
+
 }
 
 // 1. Try to load from environment variables (for production deployments)
@@ -37,7 +37,7 @@ if (!config && typeof window !== 'undefined') {
         // This will be loaded by a separate script tag in the HTML
         if (window.IntelliGymLocalConfig) {
             config = window.IntelliGymLocalConfig;
-            console.log('✅ Loaded configuration from config.local.js (fallback)');
+
         } else {
             console.log('⚠️ No IntelliGymLocalConfig found in window object');
         }
@@ -86,7 +86,7 @@ if (typeof module !== 'undefined' && module.exports) {
         setTimeout(() => {
             if (window.IntelliGymLocalConfig) {
                 window.IntelliGymConfig = window.IntelliGymLocalConfig;
-                console.log('✅ Updated configuration from config.local.js (delayed load)');
+
                 
                 // If initializeSupabase function exists, call it to reinitialize with new config
                 if (typeof window.initializeSupabase === 'function') {
