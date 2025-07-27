@@ -634,14 +634,29 @@
         console.log('window.IntelliGymConfig:', window.IntelliGymConfig);
         console.log('window.IntelliGymLocalConfig:', window.IntelliGymLocalConfig);
         
-        // Initialize Supabase client using configuration
-        const supabaseUrl = window.IntelliGymConfig.supabase.url;
-        const supabaseKey = window.IntelliGymConfig.supabase.anonKey;
+        // Initialize Supabase client after configuration is loaded
+        let supabase = null;
         
-        console.log('🔍 Supabase URL:', supabaseUrl);
-        console.log('🔍 Supabase Key length:', supabaseKey ? supabaseKey.length : 'undefined');
+        window.initializeSupabase = function() {
+            const supabaseUrl = window.IntelliGymConfig.supabase.url;
+            const supabaseKey = window.IntelliGymConfig.supabase.anonKey;
+            
+            console.log('🔍 Supabase URL:', supabaseUrl);
+            console.log('🔍 Supabase Key length:', supabaseKey ? supabaseKey.length : 'undefined');
+            
+            if (supabaseUrl && supabaseKey && !supabaseUrl.includes('YOUR_SUPABASE_URL_HERE')) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                console.log('✅ Supabase client initialized successfully');
+                
+                // Now that Supabase is initialized, check auth state
+                checkAuthState();
+            } else {
+                console.log('⚠️ Waiting for configuration to load...');
+            }
+        }
         
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // Initialize immediately
+        initializeSupabase();
 
         // Global user state
         let currentUser = null;

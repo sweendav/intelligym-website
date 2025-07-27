@@ -87,6 +87,11 @@ if (typeof module !== 'undefined' && module.exports) {
             if (window.IntelliGymLocalConfig) {
                 window.IntelliGymConfig = window.IntelliGymLocalConfig;
                 console.log('✅ Updated configuration from config.local.js (delayed load)');
+                
+                // If initializeSupabase function exists, call it to reinitialize with new config
+                if (typeof window.initializeSupabase === 'function') {
+                    window.initializeSupabase();
+                }
             }
         }, 100);
     }
