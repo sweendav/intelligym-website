@@ -7,7 +7,7 @@
     <!-- Add Supabase JavaScript client -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <!-- Load local configuration first (if it exists) -->
-    <script src="config.local.js" onerror="console.log('No local config found, using default configuration')"></script>
+    <script src="config.local.js"></script>
     <!-- Load main configuration -->
     <script src="config.js"></script>
     <style>
@@ -637,7 +637,6 @@
         window.initializeSupabase = function() {
             // Only create client if it doesn't exist already
             if (supabase) {
-                console.log('Supabase client already exists, skipping initialization');
                 return;
             }
             
@@ -646,12 +645,10 @@
             
             if (supabaseUrl && supabaseKey && !supabaseUrl.includes('YOUR_SUPABASE_URL_HERE')) {
                 supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                console.log('Supabase client initialized successfully');
+
                 
                 // Now that Supabase is initialized, check auth state
                 checkAuthState();
-            } else {
-                console.log('Waiting for valid configuration...');
             }
         }
         

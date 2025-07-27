@@ -38,8 +38,6 @@ if (!config && typeof window !== 'undefined') {
         if (window.IntelliGymLocalConfig) {
             config = window.IntelliGymLocalConfig;
 
-        } else {
-            console.log('⚠️ No IntelliGymLocalConfig found in window object');
         }
     } catch (e) {
         console.warn('Could not load local config:', e);
@@ -65,14 +63,7 @@ if (!config) {
         }
     };
     
-    // Show warning in development
-    if (typeof window !== 'undefined') {
-        if (window.location.hostname === 'localhost') {
-            console.warn('⚠️ Using placeholder configuration. Create config.local.js for development or set environment variables for production.');
-        } else {
-            console.warn('⚠️ Using placeholder configuration. Check GitHub Secrets and deployment logs.');
-        }
-    }
+
 }
 
 // Export for use in other files
