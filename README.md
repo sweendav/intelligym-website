@@ -241,3 +241,4 @@ For issues or questions:
 This project is proprietary to IntelliGym. All rights reserved. 
 # Trigger deployment with API keys
 # Test workflow debugging
+# Force new deployment to ensure config.local.js is served
