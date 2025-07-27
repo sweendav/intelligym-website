@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>Debug Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        // Test various files to see what's accessible
+        const filesToTest = [
+            'config.js',
+            'config.local.js', 
+            'index.html',
+            'test-config.html',
+            'test-debug.html'
+        ];
+        
+        const results = [];
+        
+        async function testFile(file) {
+            try {
+                const response = await fetch(file);
+                if (response.ok) {
+                    return `✅ ${file} - Status: ${response.status}`;
+                } else {
+                    return `❌ ${file} - Status: ${response.status}`;
+                }
+            } catch (error) {
+                return `❌ ${file} - Error: ${error.message}`;
+            }
+        }
+        
+        async function runTests() {
+            for (const file of filesToTest) {
+                const result = await testFile(file);
+                results.push(result);
+            }
+            
+            document.getElementById('result').innerHTML = 
+                '<h2>File Access Test Results:</h2>' +
+                results.map(r => `<p>${r}</p>`).join('') +
+                '<h2>Current URL:</h2>' +
+                `<p>${window.location.href}</p>` +
+                '<h2>Current Directory:</h2>' +
+                `<p>${window.location.pathname}</p>`;
+        }
+        
+        runTests();
+    </script>
+</body>
+</html> 
