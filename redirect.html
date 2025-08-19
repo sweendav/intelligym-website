@@ -97,17 +97,17 @@
             
             if (isMobile) {
                 // Try to redirect to mobile app first
-                const appUrl = `intelligym://reset-password${redirectUrl}`;
+                const appUrl = `gymintel://reset-password${redirectUrl}`;
                 window.location.href = appUrl;
                 
                 // Fallback: if app doesn't open within 2 seconds, redirect to mobile web version
                 setTimeout(() => {
-                    const webUrl = `https://intelligym.app/reset-password${redirectUrl}`;
+                    const webUrl = `https://gymintel.app/reset-password${redirectUrl}`;
                     window.location.href = webUrl;
                 }, 2000);
             } else {
                 // Redirect to desktop web version
-                const webUrl = `https://intelligym.app/reset-password${redirectUrl}`;
+                const webUrl = `https://gymintel.app/reset-password${redirectUrl}`;
                 window.location.href = webUrl;
             }
         }
@@ -136,14 +136,14 @@
             if (next) params.append('next', next);
             
             const queryString = params.toString();
-            const webUrl = `https://intelligym.app/reset-password${queryString ? `?${queryString}` : ''}`;
+            const webUrl = `https://gymintel.app/reset-password${queryString ? `?${queryString}` : ''}`;
             window.location.href = webUrl;
         }
     </script>
 </head>
 <body>
     <div class="container">
-        <div class="logo">IntelliGym</div>
+        <div class="logo">GymIntel</div>
         <div class="subtitle">Your AI-Powered Workout Companion</div>
         
         <div class="spinner"></div>

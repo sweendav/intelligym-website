@@ -13,10 +13,10 @@ const config = {
     
     // App Configuration
     app: {
-        name: 'IntelliGym',
+        name: 'GymIntel',
         tagline: 'Your AI-Powered Workout Companion',
         domain: 'your-domain.com',
-        mobileAppScheme: 'intelligym://'
+        mobileAppScheme: 'gymintel://'
     },
     
     // Email Configuration
@@ -30,5 +30,5 @@ const config = {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = config;
 } else {
-    window.IntelliGymLocalConfig = config;
+    window.GymIntelLocalConfig = config;
 } 

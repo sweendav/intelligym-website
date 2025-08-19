@@ -50,20 +50,20 @@ jobs:
         
         echo "=== CREATING CONFIG FILE ==="
         cat > config.local.js << EOF
-        window.IntelliGymLocalConfig = {
+        window.GymIntelLocalConfig = {
           supabase: {
             url: '${{ secrets.SUPABASE_URL }}',
             anonKey: '${{ secrets.SUPABASE_ANON_KEY }}'
           },
           app: {
-            name: 'IntelliGym',
+            name: 'GymIntel',
             tagline: 'Your AI-Powered Workout Companion',
-            domain: '${{ secrets.APP_DOMAIN || 'www.intelligym.app' }}',
-            mobileAppScheme: 'intelligym://'
+            domain: '${{ secrets.APP_DOMAIN || 'www.gymintel.app' }}',
+            mobileAppScheme: 'gymintel://'
           },
           email: {
-            redirectTo: '${{ secrets.EMAIL_REDIRECT_URL || 'https://www.intelligym.app' }}',
-            resetPasswordRedirect: '${{ secrets.RESET_PASSWORD_REDIRECT_URL || 'https://www.intelligym.app/redirect.html' }}'
+            redirectTo: '${{ secrets.EMAIL_REDIRECT_URL || 'https://www.gymintel.app' }}',
+            resetPasswordRedirect: '${{ secrets.RESET_PASSWORD_REDIRECT_URL || 'https://www.gymintel.app/redirect.html' }}'
           }
         };
         EOF

@@ -6,8 +6,8 @@
 let config = null;
 
 // Check if config is already defined (from config.local.js)
-if (typeof window !== 'undefined' && window.IntelliGymLocalConfig) {
-    config = window.IntelliGymLocalConfig;
+if (typeof window !== 'undefined' && window.GymIntelLocalConfig) {
+    config = window.GymIntelLocalConfig;
 
 }
 
@@ -19,14 +19,14 @@ if (!config && typeof process !== 'undefined' && process.env && process.env.SUPA
             anonKey: process.env.SUPABASE_ANON_KEY
         },
         app: {
-            name: 'IntelliGym',
+            name: 'GymIntel',
             tagline: 'Your AI-Powered Workout Companion',
-            domain: process.env.APP_DOMAIN || 'www.intelligym.app',
-            mobileAppScheme: 'intelligym://'
+            domain: process.env.APP_DOMAIN || 'www.gymintel.app',
+            mobileAppScheme: 'gymintel://'
         },
         email: {
-            redirectTo: process.env.EMAIL_REDIRECT_URL || 'https://www.intelligym.app',
-            resetPasswordRedirect: process.env.RESET_PASSWORD_REDIRECT_URL || 'https://www.intelligym.app/redirect.html'
+            redirectTo: process.env.EMAIL_REDIRECT_URL || 'https://www.gymintel.app',
+            resetPasswordRedirect: process.env.RESET_PASSWORD_REDIRECT_URL || 'https://www.gymintel.app/redirect.html'
         }
     };
 }
@@ -35,8 +35,8 @@ if (!config && typeof process !== 'undefined' && process.env && process.env.SUPA
 if (!config && typeof window !== 'undefined') {
     try {
         // This will be loaded by a separate script tag in the HTML
-        if (window.IntelliGymLocalConfig) {
-            config = window.IntelliGymLocalConfig;
+        if (window.GymIntelLocalConfig) {
+            config = window.GymIntelLocalConfig;
 
         }
     } catch (e) {
@@ -52,14 +52,14 @@ if (!config) {
             anonKey: 'YOUR_SUPABASE_ANON_KEY_HERE'
         },
         app: {
-            name: 'IntelliGym',
+            name: 'GymIntel',
             tagline: 'Your AI-Powered Workout Companion',
-            domain: 'www.intelligym.app',
-            mobileAppScheme: 'intelligym://'
+            domain: 'www.gymintel.app',
+            mobileAppScheme: 'gymintel://'
         },
         email: {
-            redirectTo: 'https://www.intelligym.app',
-            resetPasswordRedirect: 'https://www.intelligym.app/redirect.html'
+            redirectTo: 'https://www.gymintel.app',
+            resetPasswordRedirect: 'https://www.gymintel.app/redirect.html'
         }
     };
     
@@ -75,8 +75,8 @@ if (typeof module !== 'undefined' && module.exports) {
     // Check for local config after a short delay (in case config.local.js loads after this)
     if (typeof window !== 'undefined') {
         setTimeout(() => {
-            if (window.IntelliGymLocalConfig) {
-                window.IntelliGymConfig = window.IntelliGymLocalConfig;
+            if (window.GymIntelLocalConfig) {
+                window.IntelliGymConfig = window.GymIntelLocalConfig;
 
                 
                 // If initializeSupabase function exists, call it to reinitialize with new config
